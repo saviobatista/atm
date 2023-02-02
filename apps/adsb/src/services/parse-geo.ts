@@ -15,6 +15,50 @@ const parseGeo = async (
   aerodrome: string
 ): Promise<Database> => {
   //Grab valid targets from database aerodrome
+  const places: Place[] = await getPlaces(client, aerodrome);
+  // Cross paths with relevant points (rwys, twys, wp)
+  for (const [hex, aircraft] of database) {
+    for (const idx in aircraft.flights) {
+      const flight = aircraft.flights[idx];
+      for (const idx2 in flight.path) {
+        const { latitude, longitude, date, speed, altitude } =
+          flight.path[idx2];
+        if (
+          longitude &&
+          latitude &&
+          !Number.isNaN(latitude) &&
+          !Number.isNaN(longitude)
+        ) {
+          const position = point([longitude, latitude]);
+          for (const place of places) {
+            if (inside(position, place.polygon)) {
+              const current = flight.geo.get(place.label);
+              if (!current) {
+                flight.geo.set(place.label, {
+                  latitude,
+                  longitude,
+                  date,
+                  speed,
+                  altitude,
+                });
+              } else {
+                flight.geo.set(place.label, { ...current, leaving: date });
+              }
+            }
+          }
+        }
+      }
+      aircraft.flights[idx] = flight;
+    }
+    database.set(hex, aircraft);
+  }
+  return database;
+};
+
+const getPlaces = async (
+  client: PrismaClient,
+  aerodrome: string
+): Promise<Place[]> => {
   const places: Place[] = [];
   //Runways
   //COORDS SAMPLE: 'POLYGON ((-47.146876 -22.998268, -47.147161 -22.99861, -47.122126 -23.016567, -47.121822 -23.016202, -47.146876 -22.998268))'
@@ -76,38 +120,10 @@ const parseGeo = async (
       places.push({
         label: `${threshold} ${label}`,
         type: "WAY",
-        polygon: buffer(point(coordinates), 30),
+        polygon: buffer(point(coordinates), 60, { units: "meters" }),
       });
     }
   }
-
-  // Cross paths with relevant points (rwys, twys, wp)
-  for (const [hex, aircraft] of database) {
-    for (const { path, geo } of aircraft.flights) {
-      for (const { latitude, longitude, date, speed, altitude } of path) {
-        if (
-          longitude &&
-          latitude &&
-          !Number.isNaN(latitude) &&
-          !Number.isNaN(longitude)
-        ) {
-          const position = point([longitude, latitude]);
-          for (const { label, polygon } of places) {
-            if (inside(position, polygon)) {
-              const current = geo.get(label);
-              if (!current) {
-                geo.set(label, { latitude, longitude, date, speed, altitude });
-              } else {
-                geo.set(label, { ...current, leaving: date });
-              }
-            }
-          }
-        }
-      }
-    }
-    database.set(hex, aircraft);
-  }
-  return database;
+  return places;
 };
-
 export default parseGeo;

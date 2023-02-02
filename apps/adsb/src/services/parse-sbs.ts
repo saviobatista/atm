@@ -68,7 +68,7 @@ const parseSBS = async (
           rwy,
           path: [],
           geo: new Map<string, GeoPosition>(),
-          date: data[6].replaceAll("/", "-"),
+          date: new Date(data[6].replaceAll("/", "-")),
         });
       }
       // Register position

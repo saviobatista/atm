@@ -5,7 +5,7 @@ type GetFlightFromDatabaseResponse = {
   callsign: string;
   origin: string;
   destination: string;
-  time: string;
+  time: Date;
   rwy: string;
 };
 type GetFlightQueryResult = {
@@ -35,7 +35,7 @@ export const getFlightFromDatabase = async (
       callsign: response[0].CallSign,
       origin: response[0].aDep,
       destination: response[0].aDes,
-      time: getTime(response) || "",
+      time: getTime(response[0]) || date,
       rwy: response[0].RunWay,
     };
   }
@@ -43,19 +43,11 @@ export const getFlightFromDatabase = async (
     callsign: registration,
     origin: "ZZZZ",
     destination: "ZZZZ",
-    time:
-      `0${date.getUTCHours().toString()}`.substring(-2) +
-      `0${date.getMinutes().toString()}`.substring(-2),
+    time: date,
     rwy: "",
   };
 };
 
-const getTime = (data: GetFlightQueryResult[]): string | undefined => {
-  return (
-    data[0].EOBT ||
-    (data[0].DTEvent || data[0].DHEvent)
-      ?.toISOString()
-      .substring(11, 16)
-      .replaceAll(":", "")
-  );
+const getTime = (data: GetFlightQueryResult): Date | undefined => {
+  return data.EOBT ? new Date(data.EOBT) : data.DTEvent || data.DHEvent;
 };

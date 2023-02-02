@@ -1,5 +1,6 @@
-import { Database, GeoPosition } from "../types";
+import { Database } from "../types";
 import { PrismaClient } from "@prisma/client";
+
 const toDatabase = async (
   client: PrismaClient,
   database: Database
@@ -23,14 +24,15 @@ const toDatabase = async (
           )
           .filter((v) => v !== undefined)
           .join(", ")}))`;
+
         await client.$queryRaw`DELETE FROM [adsb].[Flight] WHERE [id] LIKE ${id}`;
+        await client.$queryRaw`DELETE FROM [adsb].[FlightLog] WHERE [flight] LIKE ${id}`;
         await client.$queryRaw`INSERT INTO [adsb].[Flight] ([id],[aerodrome],[modes],[type],[registration],[callsign],[origin],[destination],[date],[time],[path]) VALUES(${id},${aerodrome},${modes},${type},${registration},${callsign},${origin},${destination},${date},${time},GEOGRAPHY::STMLineFromText(${geoPath},4326))`;
 
         for (const [
           label,
           { date, longitude, latitude, altitude, leaving, speed },
         ] of geo) {
-          await client.$queryRaw`DELETE FROM [adsb].[FlightLog] WHERE [flight] LIKE ${id} AND [waypoint] LIKE ${label}`;
           if (leaving) {
             await client.$queryRaw`INSERT INTO [adsb].[FlightLog] ([flight],[waypoint],[date],[position],[speed],[altitude],[last]) VALUES (${id},${label},${date},geography::Point(${latitude}, ${longitude}, 4326),${speed},${altitude},${leaving})`;
           } else {

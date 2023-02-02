@@ -10,9 +10,7 @@ const worker = async () => {
   const { file, dir, aerodrome } = workerData;
   log(`Worker para ${file}`);
 
-  const client = new PrismaClient({
-    // log: ["error", "query"],
-  });
+  const client = new PrismaClient();
   log(`${new Date().toISOString()} - ${file}: Processando Basestation`);
   const database = await parseSBS(client, file, dir, aerodrome);
   log(
@@ -26,8 +24,6 @@ const worker = async () => {
   await client.$disconnect();
   log(`${new Date().toISOString()} - ${file}: TO KML`);
   toKML(database2);
-  // log("TO CSV");
-  // toCSV(file, database);
 
   parentPort?.postMessage(`Arquivo ${file} finalizado`);
 };

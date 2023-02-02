@@ -72,11 +72,11 @@ export type Flight = {
   callsign: string;
   origin: string;
   destination: string;
-  time: string;
+  time: Date;
   rwy: string;
   path: Path[];
   geo: Map<string, GeoPosition>;
-  date: string;
+  date: Date;
 };
 export type Aircraft = {
   modes: string;

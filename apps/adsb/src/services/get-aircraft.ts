@@ -348,5 +348,5 @@ const getFromRadarBox = async (
   return undefined;
 };
 const timeout = (): Promise<any> => {
-  return new Promise((resolve) => setTimeout(resolve, 2000));
+  return new Promise((resolve) => setTimeout(resolve, 1000));
 };

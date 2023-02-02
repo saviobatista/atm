@@ -42,11 +42,11 @@ model Flight {
 model FlightLog {
   flight   String                   @db.Char(36)
   waypoint String                   @db.VarChar(10)
-  date     DateTime                 @db.Date
+  date     DateTime                 @db.DateTime
   position Unsupported("geography")
   speed    Int?
   altitude Int?
-  last     DateTime?                @db.Date
+  last     DateTime?                @db.DateTime
 
   @@id([flight, waypoint], map: "PK__FlightLo__2B8149DDD919E5F0")
   @@schema("adsb")
