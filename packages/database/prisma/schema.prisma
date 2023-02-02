@@ -1,0 +1,226 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+  schemas  = ["adsb"]
+}
+
+model Aerodrome {
+  icao String @id(map: "PK__Aerodrom__9DF9D88483306943") @db.Char(4)
+
+  @@schema("adsb")
+}
+
+model Aircraft {
+  modes        String @id
+  type         String
+  registration String
+
+  @@schema("adsb")
+}
+
+model Flight {
+  id           String                   @id(map: "PK__Flight__3213E83F1AFA8EA5") @db.Char(36)
+  aerodrome    String                   @db.Char(4)
+  modes        String                   @db.Char(6)
+  type         String                   @db.Char(4)
+  registration String                   @db.VarChar(10)
+  callsign     String?                  @db.VarChar(20)
+  origin       String                   @db.Char(4)
+  destination  String                   @db.Char(4)
+  date         DateTime                 @db.Date
+  time         DateTime                 @db.Time
+  path         Unsupported("geography")
+
+  @@schema("adsb")
+}
+
+model FlightLog {
+  flight   String                   @db.Char(36)
+  waypoint String                   @db.VarChar(10)
+  date     DateTime                 @db.Date
+  position Unsupported("geography")
+  speed    Int?
+  altitude Int?
+  last     DateTime?                @db.Date
+
+  @@id([flight, waypoint], map: "PK__FlightLo__2B8149DDD919E5F0")
+  @@schema("adsb")
+}
+
+model hisMovement {
+  PKMov                      String    @id(map: "PK__hisMovem__B2F086DE92E3E3F4") @db.VarChar(36)
+  FKStripMov                 String    @db.VarChar(36)
+  DHMov                      DateTime  @db.DateTime
+  CountMov                   Int       @default(autoincrement())
+  LocalityStrip              String?   @db.VarChar(15)
+  FlightLocation             String?   @db.VarChar(1)
+  IsMovement                 Int?      @db.SmallInt
+  MovModule                  String?   @db.VarChar(20)
+  MovState                   String?   @db.VarChar(3)
+  MovType                    String?   @db.VarChar(3)
+  StatusClr                  String?   @db.VarChar(5)
+  IntegrationFlag            Int?      @db.TinyInt
+  DTStrip                    DateTime? @db.DateTime
+  DTOut                      DateTime? @db.DateTime
+  DTEstimated                DateTime? @db.DateTime
+  DTPlanned                  DateTime? @db.DateTime
+  DTSlot                     DateTime? @db.DateTime
+  DTEvent                    DateTime? @db.DateTime
+  DHEvent                    DateTime? @db.DateTime
+  SQEvent                    Int?      @db.SmallInt
+  EventType                  String?   @db.VarChar(3)
+  EventDesc                  String?   @db.VarChar(50)
+  EventCount                 Int?      @db.SmallInt
+  EventTitle                 String?   @db.VarChar(35)
+  AbortRadio                 String?   @db.VarChar(50)
+  AbortReason                String?   @db.VarChar(50)
+  AbortRemark                String?   @db.VarChar(512)
+  UserEvent                  String?   @db.VarChar(128)
+  IsLastEvent                Int       @db.TinyInt
+  CallSign                   String?   @db.VarChar(7)
+  aDep                       String?   @db.VarChar(4)
+  aDes                       String?   @db.VarChar(4)
+  Transponder                String?   @db.VarChar(4)
+  FlightType                 String?   @db.VarChar(2)
+  FL                         String?   @db.VarChar(5)
+  CruisingSpeed              String?   @db.VarChar(5)
+  POB                        String?   @db.VarChar(3)
+  PAX                        String?   @db.VarChar(3)
+  Endurance                  String?   @db.VarChar(4)
+  AltnDest                   String?   @db.VarChar(4)
+  Altn                       String?   @db.VarChar(4)
+  Altn2                      String?   @db.VarChar(4)
+  RegistrationMark           String?   @db.VarChar(10)
+  AcftType                   String?   @db.VarChar(4)
+  AcftTypeOp                 String?   @db.VarChar(4)
+  AcftTurbCat                String?   @db.VarChar(1)
+  AcftSpec                   String?   @db.VarChar(1)
+  AcftCond                   String?   @db.VarChar(1)
+  Acft                       String?   @db.VarChar(6)
+  AcftPlan                   String?   @db.VarChar(4)
+  Stand                      String?   @db.VarChar(15)
+  StandOrigin                String?   @db.VarChar(15)
+  StandDest                  String?   @db.VarChar(15)
+  StandBusy                  Int?      @db.TinyInt
+  StandChecked               Int?      @db.TinyInt
+  Sid                        String?   @db.VarChar(30)
+  Star                       String?   @db.VarChar(30)
+  FixeIn                     String?   @db.VarChar(7)
+  DTFixeIn                   DateTime? @db.DateTime
+  FixeOut                    String?   @db.VarChar(7)
+  DTFixeOut                  DateTime? @db.DateTime
+  RVSM                       String?   @db.VarChar(1)
+  Route                      String?   @db.VarChar(1024)
+  RunWay                     String?   @db.VarChar(15)
+  FlightRule                 String?   @db.VarChar(1)
+  CondMet                    String?   @db.VarChar(2)
+  RV                         String    @db.VarChar(2)
+  Siap                       String?   @db.VarChar(10)
+  FLPlan                     String?   @db.VarChar(5)
+  ClrLimit                   String?   @db.VarChar(10)
+  Equipment                  String?   @db.VarChar(70)
+  EET                        String?   @db.VarChar(4)
+  EOBT                       String?   @db.VarChar(4)
+  ETA                        String?   @db.VarChar(4)
+  TKO                        String?   @db.VarChar(4)
+  ETOI                       String?   @db.VarChar(4)
+  ETOO                       String?   @db.VarChar(4)
+  NumAcfts                   Int?      @db.SmallInt
+  CrossType                  String?   @db.VarChar(3)
+  SectorTma                  String?   @db.VarChar(3)
+  SectorFir                  String?   @db.VarChar(3)
+  InstructionCode            String?   @db.VarChar(Max)
+  MovTypeTma                 String?   @db.VarChar(3)
+  LastFL                     String?   @db.VarChar(5)
+  HcpDesSector               String?   @db.VarChar(2)
+  HcpDepSector               String?   @db.VarChar(2)
+  HcpRoute                   String?   @db.VarChar(60)
+  DLinkDCL                   Int?      @db.SmallInt
+  DelayReason                String?   @db.VarChar(50)
+  DelayRemark                String?   @db.VarChar(70)
+  FlightKind                 String?   @db.Char(1)
+  FlightAlternate            Int?      @db.TinyInt
+  FlightAlternateReason      String?   @db.VarChar(100)
+  aDesBeforeAltn             String?   @db.VarChar(4)
+  FirstAppContact            String?   @db.VarChar(50)
+  CoordACC                   String?   @db.VarChar(100)
+  aDepDesc                   String?   @db.VarChar(150)
+  aDesDesc                   String?   @db.VarChar(150)
+  DCLStatus                  Int?      @db.TinyInt
+  HasDCLRemark               Boolean?
+  Transition                 String?   @db.VarChar(7)
+  OperationalRemarks         String?   @db.NVarChar(200)
+  SpecialFlightAuthorization String?   @db.VarChar(250)
+  AccAddresses               String?   @db.VarChar(Max)
+  DHAware                    DateTime? @db.DateTime
+  DHAwareRefused             DateTime? @db.DateTime
+  AppAddresses               String?   @db.VarChar(Max)
+  OriginalRoute              String?   @db.VarChar(1024)
+  IDPlan                     String?   @db.VarChar(8)
+  OrderOP                    Int?      @db.SmallInt
+  TOBT                       DateTime? @db.DateTime
+  PushOp                     String?   @db.VarChar(4)
+  AlertFlag                  Int?      @db.TinyInt
+  TSAT                       DateTime? @db.DateTime
+  ASAT                       DateTime? @db.DateTime
+  AOBT                       DateTime? @db.DateTime
+  TTOT                       DateTime? @db.DateTime
+  CTOT                       DateTime? @db.DateTime
+  TSATFlag                   Int?      @db.TinyInt
+  TSATWindow                 Int?      @db.TinyInt
+  TSATOutWindowReason        String?   @db.VarChar(100)
+  AmsUniqueID                String?   @db.VarChar(20)
+  AmsLinkUniqueID            String?   @db.VarChar(20)
+  AtpCpi                     String?   @db.VarChar(15)
+  AmsOfb                     DateTime? @db.DateTime
+
+  @@schema("adsb")
+}
+
+model Runway {
+  aerodrome String                   @db.Char(4)
+  runway    String                   @db.VarChar(10)
+  polygon   Unsupported("geography")
+
+  @@id([aerodrome, runway], map: "PK__Runway__8CDAA8C318F1772F")
+  @@schema("adsb")
+}
+
+model Taxiway {
+  aerodrome   String                   @db.Char(4)
+  label       String                   @db.VarChar(3)
+  coordinates Unsupported("geography")
+
+  @@id([aerodrome, label], map: "PK__Taxiway__4BEA5856DA940867")
+  @@schema("adsb")
+}
+
+model Threshold {
+  aerodrome String @db.Char(4)
+  label     String @db.VarChar(3)
+
+  @@id([aerodrome, label], map: "PK__Threshol__4BEA58565EDC9B34")
+  @@schema("adsb")
+}
+
+model UnknowAircraft {
+  modes      String   @id(map: "PK__UnknowAi__0B7E2697492CBE05") @db.Char(6)
+  lastUpdate DateTime @db.DateTime
+
+  @@schema("adsb")
+}
+
+model Waypoint {
+  aerodrome String                   @db.Char(4)
+  threshold String                   @db.VarChar(3)
+  label     String                   @db.VarChar(10)
+  point     Unsupported("geography")
+
+  @@id([aerodrome, threshold, label], map: "PK__Waypoint__3FADA35DCA25E444")
+  @@schema("adsb")
+}
