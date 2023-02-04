@@ -136,23 +136,28 @@ const getFromFlightRadar24 = async (
       }
     ];
   };
-  const response = await axios.get<FlightRadarResponse>(
-    `https://www.flightradar24.com/v1/search/web/find?query=${modes}&limit=2`,
-    {
-      responseType: "json",
+  try {
+    const response = await axios.get<FlightRadarResponse>(
+      `https://www.flightradar24.com/v1/search/web/find?query=${modes}&limit=2`,
+      {
+        responseType: "json",
+      }
+    );
+    if (
+      response.status === 200 &&
+      response.data.results.length > 0 &&
+      response.data.results[0].type == "aircraft"
+    ) {
+      const data = response.data.results[0];
+      await setDatabase(client, modes, data.detail.equip, data.id);
+      return {
+        type: data.detail.equip,
+        registration: data.id,
+      };
     }
-  );
-  if (
-    response.status === 200 &&
-    response.data.results.length > 0 &&
-    response.data.results[0].type == "aircraft"
-  ) {
-    const data = response.data.results[0];
-    await setDatabase(client, modes, data.detail.equip, data.id);
-    return {
-      type: data.detail.equip,
-      registration: data.id,
-    };
+  } catch (e) {
+    console.error("ERROR AXIOS", e);
+    return undefined;
   }
   return undefined;
 };
@@ -330,23 +335,27 @@ const getFromRadarBox = async (
       }
     ];
   };
-
-  const response = await axios.get<RadaxBoxResponse>(
-    `https://www.radarbox.com/search/advanced?q=${modes}`,
-    {
-      responseType: "json",
+  try {
+    const response = await axios.get<RadaxBoxResponse>(
+      `https://www.radarbox.com/search/advanced?q=${modes}`,
+      {
+        responseType: "json",
+      }
+    );
+    if (response.status === 200 && response.data.registrations.length > 0) {
+      const data = response.data.registrations[0];
+      await setDatabase(client, modes, data.acr, data.act);
+      return {
+        type: data.act,
+        registration: data.acr,
+      };
     }
-  );
-  if (response.status === 200 && response.data.registrations.length > 0) {
-    const data = response.data.registrations[0];
-    await setDatabase(client, modes, data.acr, data.act);
-    return {
-      type: data.act,
-      registration: data.acr,
-    };
+  } catch (e) {
+    console.error("ERROR AXIOS", e);
+    return undefined;
   }
   return undefined;
 };
 const timeout = (): Promise<any> => {
-  return new Promise((resolve) => setTimeout(resolve, 1000));
+  return new Promise((resolve) => setTimeout(resolve, 3000));
 };

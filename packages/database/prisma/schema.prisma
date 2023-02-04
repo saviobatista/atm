@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlserver"
-  url      = env("DATABASE_URL")
+  url      = "sqlserver://localhost:1433;database=adsb;user=sa;password=NavTakp190!;TrustServerCertificate=true"
   schemas  = ["adsb"]
 }
 
@@ -24,17 +24,18 @@ model Aircraft {
 }
 
 model Flight {
-  id           String                   @id(map: "PK__Flight__3213E83F1AFA8EA5") @db.Char(36)
-  aerodrome    String                   @db.Char(4)
-  modes        String                   @db.Char(6)
-  type         String                   @db.Char(4)
-  registration String                   @db.VarChar(10)
-  callsign     String?                  @db.VarChar(20)
-  origin       String                   @db.Char(4)
-  destination  String                   @db.Char(4)
-  date         DateTime                 @db.Date
-  time         DateTime                 @db.Time
-  path         Unsupported("geography")
+  id           String                    @id(map: "PK__Flight__3213E83F1AFA8EA5") @db.Char(36)
+  aerodrome    String                    @db.Char(4)
+  modes        String                    @db.Char(6)
+  type         String                    @db.Char(4)
+  registration String                    @db.VarChar(10)
+  callsign     String?                   @db.VarChar(20)
+  origin       String                    @db.Char(4)
+  destination  String                    @db.Char(4)
+  date         DateTime                  @db.Date
+  time         DateTime                  @db.Time
+  path         Unsupported("geography")?
+  rwy          String?                   @db.VarChar(3)
 
   @@schema("adsb")
 }
@@ -47,6 +48,7 @@ model FlightLog {
   speed    Int?
   altitude Int?
   last     DateTime?                @db.DateTime
+  out      DateTime?                @db.DateTime
 
   @@id([flight, waypoint], map: "PK__FlightLo__2B8149DDD919E5F0")
   @@schema("adsb")

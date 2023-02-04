@@ -22,7 +22,10 @@ const toKML = async (database: Map<string, Aircraft>): Promise<void> => {
   for (const [hex, aircraft] of database) {
     for (const flight of aircraft.flights) {
       const title = `${flight.date} ${flight.time} ${flight.callsign} ${flight.origin} ${flight.destination}`;
-      const file = `tmp/${flight.date}_${flight.time}_${flight.callsign}_${flight.origin}_${flight.destination}.kml`;
+      const file =
+        `tmp/${flight.date.toISOString()}_${flight.time.toISOString()}_${
+          flight.callsign
+        }_${flight.origin}_${flight.destination}.kml`.replace("N/A", "UNKN");
       var kml = create({ version: "1.0", encoding: "UTF-8" });
       kml = kml
         .ele("kml", { xmlns: "http://www.opengis.net/kml/2.2" })

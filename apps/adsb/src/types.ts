@@ -53,9 +53,6 @@ export type Record = {
   rwy?: number;
   points: Position;
   last?: string;
-  //X speed
-  //X date
-  //X gps
 };
 export type Path = {
   date: Date;
@@ -92,4 +89,12 @@ export type GeoPosition = {
   longitude?: number;
   altitude?: number;
   leaving?: Date;
+  out?: Date;
+};
+
+export type Place = {
+  label: string;
+  type: "RWY" | "TWY" | "WAY";
+  threshold?: string;
+  polygon: Feature<Polygon>;
 };
