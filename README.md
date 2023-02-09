@@ -82,3 +82,45 @@ CREATE TABLE [dbo].[adsb] (
 );
 
 ```
+
+
+## Relatorios
+
+### BITA 15/33 tempo e velocidade, 5nm, 3nm, 6nm, cabeceira, twy livra
+SELECT 
+  type,
+  l6.date AS '6nm date',
+  l6.speed AS '6nm speed',
+  l5.date AS '5nm date',
+  l5.speed AS '5nm speed',
+  l3.date AS '3nm date',
+  l3.speed AS '3nm speed',
+  thr.date AS 'thr date',
+  thr.speed AS 'thr speed',
+  CASE  WHEN o.date IS NULL THEN thr.out ELSE o.date END AS 'out rwy'
+FROM adsb.Flight
+INNER JOIN adsb.FlightLog thr ON id = thr.flight AND thr.waypoint = '15-33'
+INNER JOIN adsb.FlightLog l5 ON id = l5.flight AND l5.waypoint = '15 5'
+INNER JOIN adsb.FlightLog l3 ON id = l3.flight AND l3.waypoint = '15 3'
+INNER JOIN adsb.FlightLog l6 ON id = l6.flight AND l6.waypoint = '15 6'
+LEFT JOIN adsb.FlightLog o ON id = o.flight AND o.waypoint = 'OUT'
+WHERE Flight.rwy = '15' 
+AND Flight.destination = 'SBKP'
+AND CASE  WHEN o.date IS NULL THEN thr.out ELSE o.date END IS NOT NULL
+
+
+SELECT 
+  type,
+  l5.date AS '5nm date',
+  l5.speed AS '5nm speed',
+  l3.date AS '3nm date',
+  l3.speed AS '3nm speed',
+  thr.date AS 'thr date',
+  thr.speed AS 'thr speed'
+FROM adsb.Flight
+INNER JOIN adsb.FlightLog thr ON id = thr.flight AND thr.waypoint = '15-33'
+INNER JOIN adsb.FlightLog l5 ON id = l5.flight AND l5.waypoint = '33 5'
+INNER JOIN adsb.FlightLog l3 ON id = l3.flight AND l3.waypoint = '33 3'
+WHERE l5.date IS NOT NULL AND l3.date IS NOT NULL AND thr.date IS NOT NULL 
+AND l3.date < thr.date AND l5.date < thr.date
+AND Flight.destination = 'SBKP'

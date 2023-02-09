@@ -67,7 +67,7 @@ const toKML = async (database: Map<string, Aircraft>): Promise<void> => {
         .up()
         .ele("Point")
         .ele("coordinates")
-        .txt("-47,1455363,-23,0109027,644")
+        .txt("-47.1455363,-23.0109027")
         .up()
         .up()
         .up()

@@ -44,3 +44,4 @@ apps/*/tmp/
 tmp/
 .kml
 .csv
+cron.log

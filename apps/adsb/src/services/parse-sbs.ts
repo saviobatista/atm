@@ -73,6 +73,24 @@ const parseSBS = async (
       }
       // Register position
       switch (type) {
+        case "2": // ES Surface Position Message, fields: Alt, GS, Trk, Lat, Lng, Gnd
+        if (
+          latitude &&
+          longitude &&
+          !Number.isNaN(latitude) &&
+          !Number.isNaN(longitude)
+        ) {
+          aircraft.flights.at(-1)!.path.push({
+            date,
+            altitude,
+            latitude,
+            longitude,
+            speed,
+            track,
+            ground,
+          });
+        }  
+        break;
         case "3": // ES Airborne Position Message, fields: Alt, Lat, Lng, Alrt, Emer, SPI, Gng
           if (
             latitude &&
