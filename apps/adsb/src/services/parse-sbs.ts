@@ -6,7 +6,10 @@ import { createGunzip } from "zlib";
 import { GeoPosition, Aircraft, Database } from "../types";
 import { intData, toPosition } from "../util";
 import { getAircraft } from "./get-aircraft";
-import { getFlightFromDatabase } from "./get-flight";
+import {
+  getFlightFromDatabase,
+  getFlightFromDatabaseWithCallsign,
+} from "./get-flight";
 
 const parseSBS = async (
   client: PrismaClient,
@@ -73,24 +76,42 @@ const parseSBS = async (
       }
       // Register position
       switch (type) {
+        case "1": // ES Identification and Category, fields: CallSign
+          if (callsign !== "") {
+            const newFlightData = await getFlightFromDatabaseWithCallsign(
+              client,
+              callsign,
+              date
+            );
+            if (newFlightData) {
+              aircraft.flights.at(-1)!.id = newFlightData.id!;
+              aircraft.flights.at(-1)!.callsign = newFlightData.callsign;
+              aircraft.flights.at(-1)!.origin = newFlightData.origin;
+              aircraft.flights.at(-1)!.destination = newFlightData.destination;
+              aircraft.flights.at(-1)!.time = newFlightData.time;
+              aircraft.flights.at(-1)!.rwy = newFlightData.rwy;
+              aircraft.flights.at(-1)!.time = newFlightData.time;
+            }
+          }
+          break;
         case "2": // ES Surface Position Message, fields: Alt, GS, Trk, Lat, Lng, Gnd
-        if (
-          latitude &&
-          longitude &&
-          !Number.isNaN(latitude) &&
-          !Number.isNaN(longitude)
-        ) {
-          aircraft.flights.at(-1)!.path.push({
-            date,
-            altitude,
-            latitude,
-            longitude,
-            speed,
-            track,
-            ground,
-          });
-        }  
-        break;
+          if (
+            latitude &&
+            longitude &&
+            !Number.isNaN(latitude) &&
+            !Number.isNaN(longitude)
+          ) {
+            aircraft.flights.at(-1)!.path.push({
+              date,
+              altitude,
+              latitude,
+              longitude,
+              speed,
+              track,
+              ground,
+            });
+          }
+          break;
         case "3": // ES Airborne Position Message, fields: Alt, Lat, Lng, Alrt, Emer, SPI, Gng
           if (
             latitude &&
