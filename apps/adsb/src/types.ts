@@ -98,3 +98,9 @@ export type Place = {
   threshold?: string;
   polygon: Feature<Polygon>;
 };
+
+export type QueueItem = {
+  file: string;
+  dir: string;
+  aerodrome: string;
+};

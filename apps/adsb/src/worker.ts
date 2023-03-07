@@ -12,7 +12,7 @@ const worker = async () => {
 
   const client = new PrismaClient({
     // log: ["query"]
-});
+  });
   log(`${new Date().toISOString()} - ${file}: Processando Basestation`);
   const database = await parseSBS(client, file, dir, aerodrome);
   log(
@@ -25,8 +25,8 @@ const worker = async () => {
   await toDatabase(client, database2);
   await client.$disconnect();
   // if(process.argv.includes('--kml')){
-  log(`${new Date().toISOString()} - ${file}: TO KML`);
-  toKML(database2);
+  // log(`${new Date().toISOString()} - ${file}: TO KML`);
+  // toKML(database2);
   // }
 
   parentPort?.postMessage(`Arquivo ${file} finalizado`);

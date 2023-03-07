@@ -124,3 +124,27 @@ INNER JOIN adsb.FlightLog l3 ON id = l3.flight AND l3.waypoint = '33 3'
 WHERE l5.date IS NOT NULL AND l3.date IS NOT NULL AND thr.date IS NOT NULL 
 AND l3.date < thr.date AND l5.date < thr.date
 AND Flight.destination = 'SBKP'
+
+# Calculo de delta tempo para relatorio bita
+SELECT 
+  type,
+  CONVERT(VARCHAR,thr.date,103) AS 'DATA',
+  CONVERT(VARCHAR,thr.date, 108) AS 'HORA',
+  DATEDIFF(SECOND,l6.date, l5.date) AS '𝚫 6-5',
+  DATEDIFF(SECOND,l5.date, thr.date) AS '𝚫 5-THR',
+  DATEDIFF(SECOND,l5.date, l3.date) AS '𝚫 5-3',
+  DATEDIFF(SECOND,l3.date, thr.date) AS '𝚫 3-THR',
+  l6.speed AS '6nm INST SPD',
+  l5.speed AS '5nm INST SPD',
+  l3.speed AS '3nm INST SPD',
+  thr.speed AS 'THR INST SPD'
+FROM adsb.Flight
+INNER JOIN adsb.FlightLog thr ON id = thr.flight AND thr.waypoint = '15-33'
+INNER JOIN adsb.FlightLog l5 ON id = l5.flight AND l5.waypoint = '33 5'
+INNER JOIN adsb.FlightLog l3 ON id = l3.flight AND l3.waypoint = '33 3'
+INNER JOIN adsb.FlightLog l6 ON id = l6.flight AND l6.waypoint = '33 6'
+LEFT JOIN adsb.FlightLog o ON id = o.flight AND o.waypoint = 'OUT'
+WHERE thr.date BETWEEN '2022-01-01' AND '2023-02-16 23:00:00' AND 
+thr.date > l5.date AND thr.date > l6.date AND thr.date > l3.date
+AND CASE  WHEN o.date IS NULL THEN thr.out ELSE o.date END IS NOT NULL
+ORDER BY thr.date DESC
