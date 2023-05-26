@@ -2,6 +2,13 @@ version: "3"
 volumes:
   backup:
 services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    command: --replSet rs0
   db:
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1
@@ -42,9 +49,13 @@ services:
     container_name: queue
     image: "rabbitmq:3"
     ports:
-      - "5672:5672"
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - app_network
+    restart: always
 
   web:
     container_name: web
@@ -74,7 +85,23 @@ services:
     restart: always
     networks:
       - app_network
-
+  capture:
+    image: corfr/tcpdump
+    network_mode: host
+    volumes:
+      - ./apps/capture/tcpdump_capture.sh:/tcpdump_script.sh
+    depends_on:
+      - rabbitmq
+    command: /bin/bash -c "/tcpdump_script.sh"
+  parser:
+    build:
+      context: .
+      dockerfile: ./apps/parser/Dockerfile
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+    restart: always
 networks:
   app_network:
     external: true
