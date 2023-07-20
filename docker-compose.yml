@@ -1,6 +1,7 @@
 version: "3"
 volumes:
   backup:
+  db:
   queue:
 services:
   queue:
@@ -56,7 +57,7 @@ services:
     ports:
       - '27017:27017'
     volumes:
-      - mongodb_data:/data/db
+      - db:/data/db
     command: --replSet rs0
   db:
     sysctls:
@@ -72,7 +73,8 @@ services:
       SA_PASSWORD: "NavTakp190!"
       ACCEPT_EULA: "Y"
     volumes:
-      - backup:/backup:z
+      - /data/tatic:/backup:z
+      - /data/db:/var/opt/mssql/data:z
     networks:
       - atm
   samba:
@@ -113,32 +115,7 @@ services:
     ports:
       - 3001:3001
     networks:
-      - app_network
-  transceiver:
-    container_name: transceiver
-    build:
-      context: .
-      dockerfile: ./apps/transceiver/Dockerfile
-    restart: always
-    networks:
-      - app_network
-  capture:
-    image: corfr/tcpdump
-    network_mode: host
-    volumes:
-      - ./apps/capture/tcpdump_capture.sh:/tcpdump_script.sh
-    depends_on:
-      - rabbitmq
-    command: /bin/bash -c "/tcpdump_script.sh"
-  parser:
-    build:
-      context: .
-      dockerfile: ./apps/parser/Dockerfile
-    depends_on:
-      - rabbitmq
-    links:
-      - rabbitmq
-    restart: always
+      - atm
 networks:
-  app_network:
+  atm:
     external: true

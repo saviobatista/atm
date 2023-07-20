@@ -23,6 +23,8 @@ do
         # Importa db
         query="DROP DATABASE IF EXISTS "$banco"; RESTORE DATABASE "$banco" FROM DISK='"$entry"' WITH REPLACE"$extra
         cmd=`echo '/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "'$PASSWORD'" -Q "'$query'" 2>&1'`
+        echo "Executando comando: "
+        echo $cmd
         eval "$cmd"
         echo "Processamento do banco de dados "$banco" finalizado"
     fi

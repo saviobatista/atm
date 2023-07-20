@@ -20,7 +20,7 @@ class MultiThread {
 }
 const next = () => {
   if (queue.length === 0 && runners === 0) {
-    log("Finalizou fila");
+    // log("Finalizou fila");
   }
   if (queue.length === 0 || runners >= cpuCounter) {
     return;
@@ -36,7 +36,7 @@ const next = () => {
   next();
 };
 const onMessage = (message: any) => {
-  log(`Recebeu mensagem do worker: ${message}`);
+  // log(`Recebeu mensagem do worker: ${message}`);
   log(message);
 };
 const onError = (info: any) => {
@@ -52,7 +52,7 @@ const onExit = (code: any) => {
 
 const parser = async (dir: string, aerodrome: string) => {
   log(`${aerodrome} - ${new Date().toISOString()}`);
-  log("Varrendo pasta do ADSB...");
+  // log("Varrendo pasta do ADSB...");
   const patternIndex = process.argv.indexOf("--pattern");
   const pattern = patternIndex > -1 ? process.argv[patternIndex + 1] : "";
   const regex = new RegExp(`${pattern}.csv.gz$`, "g");
@@ -61,7 +61,7 @@ const parser = async (dir: string, aerodrome: string) => {
       queue.push({ file, dir, aerodrome });
     }
   }
-  log("Pasta do ADSB varrida");
+  // log("Pasta do ADSB varrida");
   next();
 };
 

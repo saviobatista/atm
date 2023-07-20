@@ -9,11 +9,11 @@ type getAircraftFromResponse = Promise<GetAircraftResponse | undefined>;
 export const getAircraft = async (
   client: PrismaClient,
   modes: string
-): Promise<GetAircraftResponse> =>
-  (await getFromDatabase(client, modes)) ||
-  (await getFromFlightRadar24(client, modes)) ||
-  (await getFromRadarBox(client, modes)) ||
-  (await registerNotFoundAndReturnDefault(client, modes));
+): Promise<GetAircraftResponse> => Promise.resolve({ type: 'ZZZZ', registration:modes });
+  // (await getFromDatabase(client, modes)) ||
+  // (await getFromFlightRadar24(client, modes)) ||
+  // (await getFromRadarBox(client, modes)) ||
+  // (await registerNotFoundAndReturnDefault(client, modes));
 
 const setDatabase = async (
   client: PrismaClient,

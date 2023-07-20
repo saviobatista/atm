@@ -5,20 +5,22 @@ import goaround from "./services/thread-goaround";
 import heatmap from "./services/thread-heatmap";
 export default {};
 
+const DIR = "/data/log";
+
 const runner = async () => {
   const args = process.argv.slice(2);
   switch (args[0]) {
     case "parse":
-      parser("/home/savio/adsb-data", args[1]);
+      parser(DIR, args[1]);
       break;
     case "heatmap":
-      heatmap("/home/savio/adsb-data", args[1]);
+      heatmap(DIR, args[1]);
       break;
     case "goaround":
-      goaround("/home/savio/adsb-data", args[1]);
+      goaround(DIR, args[1]);
       break;
     case "reduce":
-      filterPipe("/home/savio/adsb-data");
+      filterPipe(DIR);
       break;
     default:
       error("Comando inválido", args);

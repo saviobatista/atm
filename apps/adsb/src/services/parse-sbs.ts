@@ -60,15 +60,15 @@ const parseSBS = async (
               date.getTime()
           ) > 1_200_000)
       ) {
-        const { id, callsign, origin, destination, time, rwy } =
-          await getFlightFromDatabase(client, aircraft.registration, date);
+        // const { id, callsign, origin, destination, time, rwy } =
+        //   await getFlightFromDatabase(client, aircraft.registration, date);
         aircraft.flights.push({
-          id: id ?? "",
+          id: aircraft.registration,
           callsign,
-          origin,
-          destination,
-          time,
-          rwy,
+          origin:"",
+          destination:"",
+          time:new Date(),
+          rwy:"",
           path: [],
           geo: new Map<string, GeoPosition>(),
           date: new Date(data[6].replaceAll("/", "-")),
@@ -76,24 +76,24 @@ const parseSBS = async (
       }
       // Register position
       switch (type) {
-        case "1": // ES Identification and Category, fields: CallSign
-          if (callsign !== "") {
-            const newFlightData = await getFlightFromDatabaseWithCallsign(
-              client,
-              callsign,
-              date
-            );
-            if (newFlightData) {
-              aircraft.flights.at(-1)!.id = newFlightData.id!;
-              aircraft.flights.at(-1)!.callsign = newFlightData.callsign;
-              aircraft.flights.at(-1)!.origin = newFlightData.origin;
-              aircraft.flights.at(-1)!.destination = newFlightData.destination;
-              aircraft.flights.at(-1)!.time = newFlightData.time;
-              aircraft.flights.at(-1)!.rwy = newFlightData.rwy;
-              aircraft.flights.at(-1)!.time = newFlightData.time;
-            }
-          }
-          break;
+        // case "1": // ES Identification and Category, fields: CallSign
+        //   if (callsign !== "") {
+        //     const newFlightData = await getFlightFromDatabaseWithCallsign(
+        //       client,
+        //       callsign,
+        //       date
+        //     );
+        //     if (newFlightData) {
+        //       aircraft.flights.at(-1)!.id = newFlightData.id!;
+        //       aircraft.flights.at(-1)!.callsign = newFlightData.callsign;
+        //       aircraft.flights.at(-1)!.origin = newFlightData.origin;
+        //       aircraft.flights.at(-1)!.destination = newFlightData.destination;
+        //       aircraft.flights.at(-1)!.time = newFlightData.time;
+        //       aircraft.flights.at(-1)!.rwy = newFlightData.rwy;
+        //       aircraft.flights.at(-1)!.time = newFlightData.time;
+        //     }
+        //   }
+        //   break;
         case "2": // ES Surface Position Message, fields: Alt, GS, Trk, Lat, Lng, Gnd
           if (
             latitude &&
@@ -146,7 +146,6 @@ const parseSBS = async (
       database.set(hex, aircraft);
     }
   }
-  log("Terminou parse das linhas");
   return database;
 };
 export default parseSBS;
