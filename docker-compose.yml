@@ -1,7 +1,56 @@
 version: "3"
 volumes:
   backup:
+  queue:
 services:
+  queue:
+    image: rabbitmq:3-management-alpine
+    container_name: queue
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - atm
+  producer:
+    build:
+      context: ./apps/producer
+      dockerfile: Dockerfile.producer
+    container_name: producer
+    environment:
+      - RABBITMQ_SERVER=amqp://guest:guest@queue:5672
+      - HOSTS=FR24-BC6A29C4A08A,RADAR03,S-KPAN50
+    volumes:
+      - /data/adsbqueue:/data
+    depends_on:
+      - queue
+    links: 
+      - queue
+    command: >
+      sh -c "dockerize -wait tcp://queue:5672 -timeout 300s &&
+             cargo run"
+    networks:
+      - atm
+  consumer:
+    build:
+      context: ./apps/consumer
+      dockerfile: Dockerfile.consumer
+    container_name: consumer
+    environment:
+      - RABBITMQ_SERVER=amqp://guest:guest@queue:5672
+      - HOSTS=FR24-BC6A29C4A08A,RADAR03,S-KPAN50
+    depends_on:
+      - queue
+    links: 
+      - queue
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: >
+      sh -c "dockerize -wait tcp://queue:5672 -timeout 300s &&
+             cargo run"
+    networks:
+      - atm
+    dns:
+      - 192.168.1.1
   mongodb:
     image: mongo:latest
     ports:
@@ -25,7 +74,7 @@ services:
     volumes:
       - backup:/backup:z
     networks:
-      - app_network
+      - atm
   samba:
     container_name: samba
     image: dperson/samba
@@ -43,20 +92,8 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - backup:/backup:z
-    command: '-p -s "backup;/backup;yes;no;yes;all"'
-  queue:
-    container_name: queue
-    image: "rabbitmq:3"
-    ports:
-      - '5672:5672'
-      - '15672:15672'
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    networks:
-      - app_network
-    restart: always
-
+      - /data/tatic:/data/tatic:z
+    command: '-p -s "backup;/data/tatic;yes;no;no;all;none"'
   web:
     container_name: web
     build:
@@ -66,7 +103,7 @@ services:
     ports:
       - 3000:3000
     networks:
-      - app_network
+      - atm
   api:
     container_name: api
     build:
