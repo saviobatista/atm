@@ -16,8 +16,7 @@ export const createServer = () => {
     .use("/", indexRouter)
     .use("/cron", cronRouter)
     .get("/test", (req, res) => {
-      const key =
-        "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";
+      const key = "SENDGRID_KEY";
       return res.send(key);
     });
   return app;

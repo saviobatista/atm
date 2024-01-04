@@ -73,7 +73,7 @@ const Heatmap: NextPage = () => {
   );
 
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyDEhxoUG1Ycw7V_Qmuez-k2AEROTeeuJ48",
+    googleMapsApiKey: "GOOGLE_MAPS_KEY",
     libraries: libraries as any,
   });
 
