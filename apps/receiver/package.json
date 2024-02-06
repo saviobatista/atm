@@ -16,7 +16,7 @@
   "dependencies": {
     "@maphubs/tokml": "^0.6.1",
     "amqplib": "^0.10.3",
-    "axios": "^1.2.5",
+    "axios": "^1.6.0",
     "logger": "*",
     "morgan": "^1.10.0",
     "mssql": "^7.2.0",
