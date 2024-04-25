@@ -14,7 +14,8 @@
     "preset": "jest-presets/jest/node"
   },
   "dependencies": {
-    "mssql": "^9.0.1"
+    "mssql": "^9.0.1",
+    "supertest": "^7.0.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.22",
