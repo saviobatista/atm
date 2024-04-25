@@ -19,7 +19,7 @@ services:
     container_name: producer
     environment:
       - RABBITMQ_SERVER=amqp://guest:guest@queue:5672
-      - HOSTS=FR24-BC6A29C4A08A,RADAR03,S-KPAN50
+      - HOSTS=10.55.19.240
     volumes:
       - /data/adsbqueue:/data
     depends_on:
@@ -38,7 +38,7 @@ services:
     container_name: consumer
     environment:
       - RABBITMQ_SERVER=amqp://guest:guest@queue:5672
-      - HOSTS=FR24-BC6A29C4A08A,RADAR03,S-KPAN50
+      - HOSTS=10.55.19.240
     depends_on:
       - queue
     links: 
