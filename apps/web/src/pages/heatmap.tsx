@@ -18,7 +18,7 @@ const Heatmap: NextPage = () => {
           response
             // .slice(0, 2000)
             .map(
-              ([coords, amount]) =>
+              ([coords, amount]: [string, number]) =>
                 new google.maps.LatLng(
                   parseFloat(coords.substring(0, coords.indexOf(","))),
                   parseFloat(coords.substring(coords.indexOf(",") + 1))

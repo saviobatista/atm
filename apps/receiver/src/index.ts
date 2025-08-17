@@ -19,17 +19,17 @@ const tipos = {
     '7': 'Air To Air Message',
     '8': 'All Call Reply'
 }
-const parseMsg = async (line) => {
+const parseMsg = async (line: string) => {
     const data = line.split(',')
     if(data.length==0)return
     const info = {
         'tipo': data[1],
-        'desc': data[1] in Object.keys(tipos) ? tipos[data[1]] : 'Unknown',
+        'desc': data[1] in Object.keys(tipos) ? tipos[data[1] as keyof typeof tipos] : 'Unknown',
         // 'sessionId': data[2], // Currently not in use
         // 'aircraftId': data[3], // Currently not in use
         'hexId': data[4],
         // 'flightId': data[5], // Currently not in use
-        'date': data[6].replaceAll('/','-')+ 'T'+data[7].substr(0,8),
+        'date': data[6].replace(/\//g,'-')+ 'T'+data[7].substr(0,8),
         'callsign': data[10],
         'altitude': data[11],
         'speed': data[12],
@@ -49,17 +49,19 @@ const parseMsg = async (line) => {
         await AppDataSource.manager.save(aircraft)
     }
     const radar = await getRadarRecord(info.hexId,new Date(info.date))
+    if (!radar) return;
     if(info.callsign) radar.callsign = info.callsign
-    if(info.altitude) radar.altitude = info.altitude
-    if(info.speed) radar.speed = info.speed
-    if(info.track) radar.track = info.track
+    if(info.altitude) radar.altitude = parseInt(info.altitude)
+    if(info.speed) radar.speed = parseInt(info.speed)
+    if(info.track) radar.track = parseInt(info.track)
     if(info.latitude&&info.longiture) radar.position = 'POINT('+info.longiture+' '+info.latitude+')'
-    if(info.verticalRate) radar.vertical = info.verticalRate
+    if(info.verticalRate) radar.vertical = parseInt(info.verticalRate)
     await AppDataSource.manager.save(Radar,radar)
 }
 const getRadarRecord = async (hex:string,date:Date):Promise<Radar> => {
     if(await AppDataSource.manager.countBy(Radar,{hex,date})==1) {
-        return await AppDataSource.manager.findOneBy(Radar,{hex,date})
+        const existing = await AppDataSource.manager.findOneBy(Radar,{hex,date})
+        if (existing) return existing;
     }
     const radar = new Radar()
     radar.hex = hex

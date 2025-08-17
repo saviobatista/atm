@@ -6,10 +6,10 @@ export class Radar {
   // @OneToOne(()=>Aircraft)
   // @JoinColumn()
   @PrimaryColumn({ type: "varchar", length: 6 })
-  hex: string;
+  hex!: string;
 
   @PrimaryColumn({ type: "date" })
-  date: Date;
+  date!: Date;
 
   @Column({ type: "varchar", length: 10, nullable: true })
   callsign?: string;

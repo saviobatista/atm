@@ -5,6 +5,7 @@ import { createInterface } from "readline";
 import { createGunzip } from "zlib";
 import { parse } from "./parse";
 import { update } from "./update";
+import { Message } from "./message";
 
 export default {};
 
@@ -50,7 +51,7 @@ const runner = async () => {
             crlfDelay: Infinity,
           });
           let moment: Date | undefined;
-          const flights: [] = [];
+          const flights: Message[] = [];
           for await (const line of iface) {
             const data = parse(line);
             if (moment === undefined) {
@@ -59,12 +60,12 @@ const runner = async () => {
             const flightIndex = flights.findIndex(
               (v) => v.aircraft === data?.aircraft
             );
-            if (flightIndex === -1) {
+            if (flightIndex === -1 && data) {
               flights.push(data);
-            } else {
+            } else if (data && flightIndex !== -1) {
               for (const key in data) {
-                if (!["aircraft", "moment"].includes(key) && data[key] !== "") {
-                  flights[flightIndex][key] = data[key];
+                if (!["aircraft", "moment"].includes(key) && (data as any)[key] !== "") {
+                  (flights[flightIndex] as any)[key] = (data as any)[key];
                 }
               }
             }

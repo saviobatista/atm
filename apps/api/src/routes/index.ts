@@ -8,13 +8,9 @@ import parse from "../services/adsb/parse";
 import update from "../services/adsb/update";
 import { createInterface } from "readline";
 
-export default Router()
-  /**
-   * GET /info
-   * Informa última registro de movimento no banco do TATIC,
-   * util para saber se o backup está atualizado e funcionando
-   */
-  .get("/info", async (req, res) => {
+const router = Router();
+
+router.get("/info", async (req, res) => {
     const lastUpdate = await info();
     if (
       lastUpdate.substring(0, 10) !== new Date().toISOString().substring(0, 10)
@@ -25,11 +21,13 @@ export default Router()
     } else {
       return res.json({ lastUpdate });
     }
-  })
-  .get("/healthz", (req, res) => {
+  });
+
+  router.get("/healthz", (req, res) => {
     return res.json({ ok: true });
-  })
-  .get("/parse", async (req, res) => {
+  });
+
+  router.get("/parse", async (req, res) => {
     console.log("Carregando csv");
     // const lines = gunzipSync(readFileSync("../../adsb_log.20221003.csv.gz"))
     const iface = createInterface({
@@ -66,3 +64,5 @@ export default Router()
     console.log("finalizado");
     return res.send({ ok: true });
   });
+
+export default router;

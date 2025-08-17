@@ -4,12 +4,14 @@ import info from "../services/tatic/info";
 import iepv10034 from "../services/tatic/iepv-100-34";
 import contagem from "../services/tatic/contagem";
 
-export default Router()
-  .use(async (req, res, next) => {
-    log("Serviço de rotina chamado");
-    next();
-  })
-  .get("/daily", async (req, res) => {
+const router = Router();
+
+router.use(async (req, res, next) => {
+  log("Serviço de rotina chamado");
+  next();
+});
+
+router.get("/daily", async (req, res) => {
     const lastUpdate = await info();
     if (
       lastUpdate.substring(0, 10) !== new Date().toISOString().substring(0, 10)
@@ -25,3 +27,5 @@ export default Router()
       return res.json("ok");
     }
   });
+
+export default router;

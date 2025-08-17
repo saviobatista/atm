@@ -112,7 +112,7 @@ type Flight = {
   date: string;
   time: string;
   path: Path[];
-  waypoints: Waypoint[];
+  waypoints: { label: string; polygon: any }[];
 };
 
 type Aircraft = {
