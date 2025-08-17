@@ -15,30 +15,30 @@
   },
   "dependencies": {
     "@maphubs/tokml": "^0.6.1",
-    "amqplib": "^0.10.7",
-    "axios": "^1.8.4",
+    "amqplib": "^0.10.8",
+    "axios": "^1.11.0",
     "logger": "*",
-    "morgan": "^1.10.0",
+    "morgan": "^1.10.1",
     "mssql": "^11.0.1",
     "reflect-metadata": "^0.2.2",
     "supertest": "^7.1.0",
-    "typeorm": "^0.3.22"
+    "typeorm": "^0.3.25"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.0",
-    "@types/jest": "^29.5.14",
-    "@types/morgan": "^1.9.2",
-    "@types/node": "^22.14.0",
+    "@types/amqplib": "^0.10.7",
+    "@types/jest": "^30.0.0",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.3.0",
     "@types/supertest": "^6.0.3",
-    "esbuild": "^0.25.2",
-    "esbuild-register": "^3.3.2",
-    "eslint": "^9.24.0",
+    "esbuild": "^0.25.9",
+    "esbuild-register": "^3.6.0",
+    "eslint": "^9.33.0",
     "eslint-config-custom-server": "*",
-    "jest": "^29.7.0",
+    "jest": "^30.0.5",
     "jest-presets": "*",
-    "nodemon": "^3.1.9",
-    "supertest": "^6.1.3",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.4",
     "tsconfig": "*",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   }
 }
