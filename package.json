@@ -24,5 +24,10 @@
   "engines": {
     "node": ">=14.0.0",
     "npm": ">=7.0.0"
+  },
+  "resolutions": {
+    "form-data": "^4.0.4",
+    "brace-expansion": "^2.0.2",
+    "formidable": "^3.5.3"
   }
 }
